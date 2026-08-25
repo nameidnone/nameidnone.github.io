@@ -1,0 +1,18 @@
+[
+  {
+    "id": "sample-post",
+    "title": "欢迎来到我的博客",
+    "date": "2026-08-25",
+    "tags": ["欢迎", "博客"],
+    "excerpt": "这是第一篇示例文章，介绍这个博客系统。",
+    "content": "# 欢迎来到我的博客\n\n这是一个使用 **GitHub Pages + Workflow + WebDAV** 的轻量博客系统。\n\n## 特点\n\n- 自动发布\n- Markdown 写作\n- 标签筛选\n- 大文件同步\n\n你可以在这里记录想法、实验和观察。\n\n![示例图片](../assets/example.jpg)"
+  },
+  {
+    "id": "second-post",
+    "title": "实验记录：WebDAV 同步",
+    "date": "2026-08-20",
+    "tags": ["实验", "WebDAV"],
+    "excerpt": "测试通过 WebDAV 同步大文件到 assets 目录。",
+    "content": "# WebDAV 同步测试\n\n大文件（PDF、图片）通过 rclone 同步到 `assets/` 目录，文章中可以使用相对路径引用。\n\n## 使用方法\n\n1. 上传文件到 WebDAV 的 `/assets` 目录\n2. Workflow 自动同步到仓库\n3. 文章中通过 `../assets/文件名` 引用"
+  }
+]
