@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="nameidnone 的博客文章。">
+    <title>文章 - NAMEIDNONE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="mark" href="index.html">N<span>/</span>N — 2026</a>
+        <nav class="nav" aria-label="主导航">
+            <a href="index.html#work">作品</a>
+            <a href="blog.html">博客</a>
+            <a href="index.html#about">关于</a>
+            <button class="theme-toggle" type="button" aria-label="切换深色模式">黑/白</button>
+        </nav>
+    </header>
+
+    <main class="post-container">
+        <article id="postArticle" class="post-article">
+            <div class="loading-state">加载中...</div>
+        </article>
+        <aside class="post-sidebar">
+            <div class="back-link">
+                <a href="blog.html">← 返回博客</a>
+            </div>
+            <div class="post-meta" id="postMeta"></div>
+        </aside>
+    </main>
+
+    <footer>
+        <span>© nameidnone 2026</span>
+        <span>Made with intent / GitHub Pages / WebDAV sync</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/post.js"></script>
+</body>
+</html>
