@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="nameidnone 的博客与实验日志。">
+    <title>NAMEIDNONE / 博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="mark" href="index.html">N<span>/</span>N — 2026</a>
+        <nav class="nav" aria-label="主导航">
+            <a href="index.html#work">作品</a>
+            <a href="blog.html">博客</a>
+            <a href="index.html#about">关于</a>
+            <button class="theme-toggle" type="button" aria-label="切换深色模式">黑/白</button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="blog-hero" aria-labelledby="blog-title">
+            <div class="blog-hero-copy">
+                <p class="eyebrow reveal">BLOG / 实验日志</p>
+                <h1 id="blog-title" class="reveal">写作<br><span class="highlight-word">与记录</span></h1>
+                <p class="blog-intro reveal">想法、实验和观察。这里是我的数字花园，持续生长中。</p>
+                <div class="blog-stats reveal" id="blogStats">
+                    <span class="stat-item">📄 <span id="postCount">0</span> 篇文章</span>
+                    <span class="stat-item">🏷️ <span id="tagCount">0</span> 个标签</span>
+                </div>
+            </div>
+            <div class="blog-visual" aria-hidden="true">
+                <div class="visual-circle"></div>
+                <div class="visual-line"></div>
+                <div class="visual-dots"></div>
+            </div>
+        </section>
+
+        <section class="blog-content" id="blog-content">
+            <div class="blog-toolbar reveal">
+                <div class="search-box">
+                    <input type="search" id="searchInput" placeholder="搜索文章..." aria-label="搜索文章">
+                    <span class="search-icon">⌕</span>
+                </div>
+                <div class="tag-filter" id="tagFilter" role="group" aria-label="标签筛选">
+                    <button class="tag-btn active" data-tag="all">全部</button>
+                </div>
+            </div>
+            <div class="post-grid" id="postGrid" aria-live="polite">
+                <div class="loading-state" id="loadingState">
+                    <span class="loading-spinner"></span> 加载中...
+                </div>
+            </div>
+            <div class="pagination" id="pagination" aria-label="分页"></div>
+        </section>
+    </main>
+
+    <footer>
+        <span>© nameidnone 2026</span>
+        <span>Made with intent / GitHub Pages / WebDAV sync</span>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/blog.js"></script>
+</body>
+</html>
