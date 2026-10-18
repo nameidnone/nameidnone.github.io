@@ -1,70 +1,215 @@
-(function() {
-    // 主题切换
-    const toggle = document.querySelector('.theme-toggle');
+(function () {
+    'use strict';
+
     const body = document.body;
-    const savedTheme = localStorage.getItem('nn-theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark');
-        toggle.textContent = '白/黑';
-    } else {
-        toggle.textContent = '黑/白';
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    body.classList.add('js-ready');
+
+    /* ---------- Splash / intro layer ---------- */
+    const splash = document.getElementById('splash');
+
+    if (splash) {
+        let splashSeen = false;
+
+        try {
+            splashSeen = sessionStorage.getItem('nn-splash-seen') === '1';
+        } catch (error) {
+            /* Unavailable storage: treat as a first visit. */
+        }
+
+        if (splashSeen) {
+            splash.remove();
+            root.classList.remove('splash-pending');
+        } else {
+            let leaving = false;
+
+            const onKey = (event) => {
+                if (event.key === 'Enter' || event.key === ' ' || event.key === 'Escape') {
+                    event.preventDefault();
+                    dismissSplash();
+                }
+            };
+
+            const dismissSplash = () => {
+                if (leaving) return;
+                leaving = true;
+
+                try {
+                    sessionStorage.setItem('nn-splash-seen', '1');
+                } catch (error) {
+                    /* Ignore. */
+                }
+
+                document.removeEventListener('keydown', onKey);
+                splash.classList.add('is-leaving');
+                root.classList.remove('splash-pending');
+                window.setTimeout(() => splash.remove(), 1100);
+            };
+
+            splash.setAttribute('tabindex', '-1');
+            splash.focus({ preventScroll: true });
+            splash.addEventListener('click', dismissSplash, { once: true });
+            document.addEventListener('keydown', onKey);
+        }
     }
-    toggle.addEventListener('click', () => {
-        body.classList.toggle('dark');
-        const isDark = body.classList.contains('dark');
-        toggle.textContent = isDark ? '白/黑' : '黑/白';
-        localStorage.setItem('nn-theme', isDark ? 'dark' : 'light');
+
+    /* ---------- Theme ---------- */
+    const toggle = document.querySelector('.theme-toggle');
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const themeLabel = toggle ? toggle.querySelector('.theme-label') : null;
+
+    function readTheme() {
+        try {
+            return localStorage.getItem('nn-theme');
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storeTheme(value) {
+        try {
+            localStorage.setItem('nn-theme', value);
+        } catch (error) {
+            /* Storage can be unavailable in private contexts. */
+        }
+    }
+
+    function syncTheme(isDark) {
+        body.classList.toggle('dark', isDark);
+        if (themeMeta) themeMeta.setAttribute('content', isDark ? '#101114' : '#F5F6F8');
+        if (toggle) {
+            toggle.setAttribute('aria-pressed', String(isDark));
+            toggle.setAttribute('aria-label', isDark ? '切换到浅色模式' : '切换到深色模式');
+            toggle.title = isDark ? '切换到浅色模式' : '切换到深色模式';
+        }
+        if (themeLabel) {
+            themeLabel.textContent = isDark ? '浅色模式' : '深色模式';
+        }
+    }
+
+    syncTheme(body.classList.contains('dark') || readTheme() === 'dark');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            const isDark = !body.classList.contains('dark');
+            syncTheme(isDark);
+            storeTheme(isDark ? 'dark' : 'light');
+        });
+    }
+
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'nn-theme') syncTheme(event.newValue === 'dark');
     });
 
-    // 滚动出现动画
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
+    /* ---------- Scroll reveal ---------- */
+    const revealItems = document.querySelectorAll('.reveal');
+
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
                 entry.target.classList.add('is-visible');
                 observer.unobserve(entry.target);
-            }
+            });
+        }, {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
         });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach((el, index) => {
-        el.style.transitionDelay = `${Math.min(index * 60, 300)}ms`;
-        observer.observe(el);
-    });
 
-    // 光标光晕
-    const glow = document.getElementById('cursorGlow');
-    if (glow) {
-        let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0, rafId = null;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            if (!rafId) rafId = requestAnimationFrame(updateGlow);
+        revealItems.forEach((el, index) => {
+            el.style.transitionDelay = `${Math.min(index * 55, 280)}ms`;
+            observer.observe(el);
         });
-        function updateGlow() {
-            glowX += (mouseX - glowX) * 0.12;
-            glowY += (mouseY - glowY) * 0.12;
-            glow.style.left = glowX + 'px';
-            glow.style.top = glowY + 'px';
-            if (Math.abs(mouseX - glowX) > 0.5 || Math.abs(mouseY - glowY) > 0.5) {
-                rafId = requestAnimationFrame(updateGlow);
-            } else rafId = null;
-        }
-        document.addEventListener('mouseleave', () => glow.style.opacity = '0');
-        document.addEventListener('mouseenter', () => glow.style.opacity = '1');
+    } else {
+        revealItems.forEach((el) => el.classList.add('is-visible'));
     }
 
-    // 平滑滚动锚点（带偏移）
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-                e.preventDefault();
-                const headerOffset = 70;
-                const elementPosition = targetEl.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    /* ---------- Ambient cursor light ---------- */
+    const glow = document.getElementById('cursorGlow');
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    if (glow && canHover && !reduceMotion) {
+        let targetX = window.innerWidth / 2;
+        let targetY = window.innerHeight / 2;
+        let glowX = targetX;
+        let glowY = targetY;
+        let rafId = null;
+
+        const updateGlow = () => {
+            glowX += (targetX - glowX) * 0.12;
+            glowY += (targetY - glowY) * 0.12;
+            glow.style.left = glowX + 'px';
+            glow.style.top = glowY + 'px';
+
+            if (Math.abs(targetX - glowX) > 0.5 || Math.abs(targetY - glowY) > 0.5) {
+                rafId = requestAnimationFrame(updateGlow);
+            } else {
+                rafId = null;
+            }
+        };
+
+        document.addEventListener('pointermove', (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            glow.style.opacity = '1';
+            if (!rafId) rafId = requestAnimationFrame(updateGlow);
+        }, { passive: true });
+
+        document.addEventListener('pointerleave', () => {
+            glow.style.opacity = '0';
+        });
+
+        window.addEventListener('blur', () => {
+            glow.style.opacity = '0';
+        });
+
+        glow.style.left = glowX + 'px';
+        glow.style.top = glowY + 'px';
+    }
+
+    /* ---------- Sidebar collapse ---------- */
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const smallScreen = window.matchMedia('(max-width: 900px)');
+
+    if (sidebar && sidebarToggle) {
+        const STORAGE_KEY = 'nn-sidebar-collapsed';
+        let stored = null;
+
+        try {
+            stored = localStorage.getItem(STORAGE_KEY);
+        } catch (error) {
+            /* Storage can be unavailable in private contexts. */
+        }
+
+        const setCollapsed = (collapsed) => {
+            body.classList.toggle('is-collapsed', collapsed);
+            sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+            const label = collapsed ? '展开侧边栏' : '收起侧边栏';
+            sidebarToggle.setAttribute('aria-label', label);
+            sidebarToggle.title = label;
+        };
+
+        setCollapsed(smallScreen.matches ? true : stored === 'true');
+
+        sidebarToggle.addEventListener('click', () => {
+            const next = !body.classList.contains('is-collapsed');
+            stored = String(next);
+            setCollapsed(next);
+            try {
+                localStorage.setItem(STORAGE_KEY, stored);
+            } catch (error) {
+                /* ignore */
             }
         });
-    });
+
+        smallScreen.addEventListener('change', (event) => {
+            setCollapsed(event.matches ? true : stored === 'true');
+        });
+    }
+
+    /* ---------- Mark the document as enhanced ---------- */
+    root.classList.add('has-js');
 })();

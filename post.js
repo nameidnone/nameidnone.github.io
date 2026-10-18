@@ -1,52 +1,140 @@
-(function() {
+(function () {
+    'use strict';
+
     const article = document.getElementById('postArticle');
     const metaDiv = document.getElementById('postMeta');
     const params = new URLSearchParams(window.location.search);
     const postId = params.get('id');
+    const indexCandidates = ['index.json', 'posts/index.json'];
+
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+
+    function formatDate(dateValue) {
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return String(dateValue ?? '');
+        return date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function readingTime(content) {
+        const text = String(content || '')
+            .replace(/```[\s\S]*?```/g, ' ')
+            .replace(/[#>*_`~\-[\]()]/g, ' ');
+        const cjk = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+        const words = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length;
+        return Math.max(1, Math.ceil((cjk + words) / 350));
+    }
+
+    function renderMarkdown(markdown) {
+        if (window.marked && typeof window.marked.parse === 'function') {
+            return window.marked.parse(markdown || '');
+        }
+
+        return String(markdown || '')
+            .split(/\n{2,}/)
+            .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+            .join('');
+    }
+
+    async function loadIndex() {
+        for (const url of indexCandidates) {
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (!response.ok) continue;
+                const data = await response.json();
+                if (Array.isArray(data)) return data;
+            } catch (error) {
+                /* Try the next candidate. */
+            }
+        }
+        throw new Error('无法加载文章索引');
+    }
+
+    async function ensureContent(post) {
+        if (post.content) return post;
+        if (!post.id) return post;
+
+        try {
+            const response = await fetch(`posts/${encodeURIComponent(post.id)}.json`, { cache: 'no-cache' });
+            if (!response.ok) return post;
+            const fullPost = await response.json();
+            return { ...post, ...fullPost };
+        } catch (error) {
+            return post;
+        }
+    }
 
     async function loadPost() {
+        if (!article) return;
+
         try {
-            const indexRes = await fetch('posts/index.json');
-            if (!indexRes.ok) throw new Error('无法加载索引');
-            const posts = await indexRes.json();
-            const post = postId ? posts.find(p => p.id === postId) : posts[0];
+            const posts = await loadIndex();
+            if (posts.length === 0) throw new Error('还没有文章');
+
+            const post = postId
+                ? posts.find((item) => item.id === postId)
+                : posts[0];
+
             if (!post) throw new Error('文章不存在');
-            document.title = `${post.title} - NAMEIDNONE`;
-            
-            // 加载具体文章文件（假设每个文章有单独文件，或内容在 index 中？这里演示从 index 中获取 content）
-            // 实际上 index.json 可以包含 content，也可以只包含元数据，我们选择包含 content 便于演示
-            // 若内容较大，建议将 content 放在单独文件中，此处假设 index.json 中每条记录包含 content 字段
-            if (!post.content) {
-                // 如果 index.json 不含 content，可以按 id 加载 posts/[id].json
-                const postRes = await fetch(`posts/${post.id}.json`);
-                if (!postRes.ok) throw new Error('文章内容加载失败');
-                const fullPost = await postRes.json();
-                post.content = fullPost.content || '暂无内容';
-            }
-            renderPost(post);
+
+            const fullPost = await ensureContent(post);
+            renderPost(fullPost);
         } catch (error) {
-            article.innerHTML = `<div class="loading-state">文章加载失败：${error.message}</div>`;
             console.error(error);
+            article.innerHTML = `
+                <div class="empty-state">文章加载失败 · ${escapeHtml(error.message)}</div>
+                <div class="post-footer">
+                    <a class="btn btn-glass" href="blog.html">← 返回博客</a>
+                </div>
+            `;
+            if (metaDiv) metaDiv.innerHTML = '';
         }
     }
 
     function renderPost(post) {
+        const tags = Array.isArray(post.tags) ? post.tags : [];
+        const title = post.title || '无标题';
+        const dateText = formatDate(post.date);
+        const minutes = readingTime(post.content);
+        const contentHtml = renderMarkdown(post.content);
+
+        document.title = title;
+
+        const descriptionMeta = document.querySelector('meta[name="description"]');
+        if (descriptionMeta && post.excerpt) {
+            descriptionMeta.setAttribute('content', post.excerpt);
+        }
+
         article.innerHTML = `
-            <h1>${post.title}</h1>
-            <span class="date">${formatDate(post.date)}</span>
-            <div class="content">${marked.parse(post.content)}</div>
+            <header class="post-header">
+                <p class="post-kicker">标签占位</p>
+                <h1>${escapeHtml(title)}</h1>
+                ${tags.length > 0
+                    ? `<div class="post-tags">${tags.map((tag) => `<span class="post-tag">${escapeHtml(tag)}</span>`).join('')}</div>`
+                    : ''}
+            </header>
+            <div class="content">${contentHtml}</div>
+            <footer class="post-footer">
+                <a class="btn btn-glass" href="blog.html">← 返回全部文章</a>
+            </footer>
         `;
+
         if (metaDiv) {
             metaDiv.innerHTML = `
-                <p><strong>标签：</strong>${(post.tags || []).map(tag => `<span class="post-tag">${tag}</span>`).join(' ')}</p>
-                <p><strong>日期：</strong>${formatDate(post.date)}</p>
+                <time datetime="${escapeHtml(post.date || '')}">${escapeHtml(dateText)}</time>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <span>${minutes} 分钟阅读</span>
             `;
         }
-    }
-
-    function formatDate(dateStr) {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     loadPost();
