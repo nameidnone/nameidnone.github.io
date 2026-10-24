@@ -14,18 +14,19 @@
             document.documentElement.classList.add(seen ? 'splash-skip' : 'splash-pending');
         })();
     </script>
-    <noscript>
-        <style>
-            .splash { display: none !important; }
-            html.splash-pending .sidebar,
-            html.splash-pending .content-area { opacity: 1 !important; transform: none !important; }
-        </style>
-    </noscript>
     <title>标题占位</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <noscript>
+        <style>
+            .splash { display: none; }
+        </style>
+    </noscript>
 </head>
 <body>
     <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="进入页面">
@@ -45,7 +46,6 @@
         } catch (error) {}
     </script>
 
-    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
     <aside class="sidebar" aria-label="侧边导航">
         <div class="sidebar-head">

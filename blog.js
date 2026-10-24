@@ -9,7 +9,7 @@
     const tagCountSpan = document.getElementById('tagCount');
 
     const postsPerPage = 6;
-    const indexCandidates = ['index.json', 'posts/index.json'];
+    const indexCandidates = ['posts/index.json', 'index.json'];
 
     let allPosts = [];
     let filteredPosts = [];
@@ -62,7 +62,7 @@
         } catch (error) {
             console.error(error);
             if (postGrid) {
-                postGrid.innerHTML = '<div class="empty-state">文章加载失败 · 请检查 index.json 是否存在</div>';
+                postGrid.innerHTML = '<div class="empty-state">文章加载失败 · 请检查 posts/index.json 是否存在</div>';
             }
             if (pagination) pagination.innerHTML = '';
         }

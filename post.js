@@ -5,7 +5,7 @@
     const metaDiv = document.getElementById('postMeta');
     const params = new URLSearchParams(window.location.search);
     const postId = params.get('id');
-    const indexCandidates = ['index.json', 'posts/index.json'];
+    const indexCandidates = ['posts/index.json', 'index.json'];
 
     const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
         '&': '&amp;',

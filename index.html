@@ -14,18 +14,19 @@
             document.documentElement.classList.add(seen ? 'splash-skip' : 'splash-pending');
         })();
     </script>
-    <noscript>
-        <style>
-            .splash { display: none !important; }
-            html.splash-pending .sidebar,
-            html.splash-pending .content-area { opacity: 1 !important; transform: none !important; }
-        </style>
-    </noscript>
     <title>标题占位</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <noscript>
+        <style>
+            .splash { display: none; }
+        </style>
+    </noscript>
 </head>
 <body>
     <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="进入页面">
@@ -45,7 +46,6 @@
         } catch (error) {}
     </script>
 
-    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
     <aside class="sidebar" aria-label="侧边导航">
         <div class="sidebar-head">
@@ -85,7 +85,7 @@
         </div>
     </aside>
 
-    <main class="content-area" id="top">
+    <main class="content-area">
         <section class="hero" aria-labelledby="hero-title">
             <div class="hero-copy">
                 <p class="eyebrow reveal"><span class="status-dot" aria-hidden="true"></span>标签占位</p>
@@ -105,27 +105,6 @@
                 <span>滚动文字占位</span>
                 <span class="ticker-dot" aria-hidden="true">✦</span>
                 <span>滚动文字占位</span>
-                <span class="ticker-dot" aria-hidden="true">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot" aria-hidden="true">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot" aria-hidden="true">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot" aria-hidden="true">✦</span>
-            </div>
-            <div class="ticker-track" aria-hidden="true">
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
-                <span>滚动文字占位</span>
-                <span class="ticker-dot">✦</span>
             </div>
         </div>
 
@@ -155,7 +134,7 @@
 
         <section class="about" id="about" aria-labelledby="about-title">
             <p class="section-label reveal">02 / 说明占位</p>
-            <div class="about-body">
+            <div>
                 <h2 id="about-title" class="reveal">标题占位</h2>
                 <p class="about-copy reveal">正文占位，<em>强调占位</em>。</p>
                 <div class="contact reveal" id="contact">

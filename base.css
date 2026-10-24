@@ -1,0 +1,188 @@
+/* =========================================================
+   Base — reset, type, design tokens
+   ========================================================= */
+
+:root {
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", "Cascadia Code", ui-monospace, monospace;
+
+  --bg: #F3F4F6;
+  --surface: #FFFFFF;
+  --surface-hover: #F0F0F0;
+  --nav-active: #EEF0F3;
+
+  --ink: #555555;
+  --ink-strong: #111111;
+  --muted: #8A8F98;
+  --accent: #2563EB;
+
+  --line: rgba(0, 0, 0, .06);
+  --line-strong: rgba(0, 0, 0, .1);
+
+  --glass: rgba(255, 255, 255, .8);
+  --glass-strong: rgba(255, 255, 255, .96);
+  --glass-border: rgba(0, 0, 0, .04);
+  --glass-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+  --glass-shadow-hover: 0 4px 12px rgba(0, 0, 0, .06);
+
+  --sidebar-bg: rgba(255, 255, 255, .85);
+  --sidebar-border: rgba(0, 0, 0, .06);
+  --avatar-bg: #1F2328;
+  --avatar-ink: #FFFFFF;
+  --nav-ink: #666666;
+  --nav-ink-active: #111111;
+  --icon-ink: #8A8F98;
+
+  --btn-bg: #1F2328;
+  --btn-ink: #FFFFFF;
+  --btn-bg-hover: #000000;
+  --on-strong: #FFFFFF;
+
+  --status: #22C55E;
+  --ticker-dot: #C7CBD1;
+  --tag-bg: #F3F4F6;
+  --focus-border: rgba(0, 0, 0, .18);
+  --focus-ring: rgba(0, 0, 0, .04);
+  --scrollbar: rgba(0, 0, 0, .14);
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --wrap: 800px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --ease-soft: cubic-bezier(.22, .61, .36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 560px at 0% -10%, rgba(99, 102, 241, .05), transparent 62%),
+    radial-gradient(820px 520px at 100% 100%, rgba(56, 132, 255, .04), transparent 60%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+::-moz-selection {
+  background: rgba(37, 99, 235, .12);
+  color: var(--ink-strong);
+}
+
+::selection {
+  background: rgba(37, 99, 235, .12);
+  color: var(--ink-strong);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--ink-strong);
+  font-weight: 700;
+  letter-spacing: -.015em;
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--mono);
+}
+
+/* ---------- Dark tokens ---------- */
+body.dark {
+  color-scheme: dark;
+
+  --bg: #141518;
+  --surface: #1C1E22;
+  --surface-hover: rgba(255, 255, 255, .06);
+  --nav-active: rgba(255, 255, 255, .08);
+
+  --ink: #C7CBD1;
+  --ink-strong: #F2F3F5;
+  --muted: #9AA1AA;
+  --accent: #6EA8FF;
+
+  --line: rgba(255, 255, 255, .08);
+  --line-strong: rgba(255, 255, 255, .16);
+
+  --glass: rgba(26, 28, 32, .8);
+  --glass-strong: rgba(32, 34, 39, .96);
+  --glass-border: rgba(255, 255, 255, .07);
+  --glass-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+  --glass-shadow-hover: 0 4px 12px rgba(0, 0, 0, .35);
+
+  --sidebar-bg: rgba(20, 21, 24, .92);
+  --sidebar-border: rgba(255, 255, 255, .08);
+  --avatar-bg: #E9EAEC;
+  --avatar-ink: #141518;
+  --nav-ink: #A6ACB5;
+  --nav-ink-active: #F2F3F5;
+  --icon-ink: #7E858F;
+
+  --btn-bg: #F2F3F5;
+  --btn-ink: #141518;
+  --btn-bg-hover: #FFFFFF;
+  --on-strong: #141518;
+
+  --status: #4ADE80;
+  --ticker-dot: rgba(255, 255, 255, .25);
+  --tag-bg: #1C1E22;
+  --focus-border: rgba(255, 255, 255, .18);
+  --focus-ring: rgba(255, 255, 255, .04);
+  --scrollbar: rgba(255, 255, 255, .16);
+
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 560px at 0% -10%, rgba(99, 102, 241, .06), transparent 62%),
+    radial-gradient(820px 520px at 100% 100%, rgba(56, 132, 255, .04), transparent 60%);
+}
+
+body.dark ::selection {
+  background: rgba(110, 168, 255, .24);
+  color: #FFFFFF;
+}

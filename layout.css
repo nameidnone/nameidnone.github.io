@@ -1,0 +1,346 @@
+/* =========================================================
+   Layout — app shell, sidebar, content column, responsive
+   ========================================================= */
+
+body {
+  display: flex;
+  --rail: 220px;
+}
+
+body.is-collapsed {
+  --rail: 64px;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: var(--rail);
+  height: 100vh;
+  height: 100dvh;
+  padding: 14px 10px;
+  overflow: hidden;
+  color: var(--nav-ink);
+  background: var(--sidebar-bg);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--avatar-ink);
+  background: var(--avatar-bg);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1;
+}
+
+.sidebar-brand-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.sidebar-brand-copy strong {
+  color: var(--nav-ink-active);
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sidebar-brand-copy small {
+  color: var(--muted);
+  font-size: .62rem;
+  white-space: nowrap;
+}
+
+.sidebar-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--icon-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.sidebar-toggle:hover {
+  color: var(--nav-ink-active);
+  background: var(--surface-hover);
+  border-color: var(--line);
+}
+
+.sidebar-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Nav ---------- */
+.sidebar-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+.sidebar-nav::before {
+  content: "导航";
+  margin: 6px 10px 8px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .56rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 10px;
+  color: var(--nav-ink);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: .78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sidebar-link:hover {
+  color: var(--nav-ink-active);
+  background: var(--surface-hover);
+}
+
+.sidebar-link[aria-current="page"] {
+  color: var(--nav-ink-active);
+  background: var(--nav-active);
+}
+
+.sidebar-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--icon-ink);
+}
+
+.sidebar-link:hover .sidebar-icon,
+.sidebar-link[aria-current="page"] .sidebar-icon {
+  color: inherit;
+}
+
+.sidebar-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Sidebar footer ---------- */
+.sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.sidebar-foot .theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  color: var(--nav-ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: .74rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sidebar-foot .theme-toggle:hover {
+  color: var(--nav-ink-active);
+  background: var(--surface-hover);
+}
+
+.theme-toggle-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--icon-ink);
+  font-size: .82rem;
+  line-height: 1;
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  color: inherit;
+}
+
+.sidebar-note {
+  margin: 0;
+  padding: 0 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .56rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+/* ---------- Collapsed rail ---------- */
+body.is-collapsed .sidebar-head {
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.is-collapsed .sidebar-brand {
+  justify-content: center;
+}
+
+body.is-collapsed .sidebar-brand-copy,
+body.is-collapsed .sidebar-label,
+body.is-collapsed .sidebar-note {
+  display: none;
+}
+
+body.is-collapsed .sidebar-nav::before {
+  display: none;
+}
+
+body.is-collapsed .sidebar-link {
+  justify-content: center;
+  padding: 0;
+}
+
+body.is-collapsed .sidebar-foot {
+  align-items: center;
+}
+
+body.is-collapsed .sidebar-foot .theme-toggle {
+  justify-content: center;
+  padding: 0;
+}
+
+body.is-collapsed .sidebar-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* ---------- Content column ---------- */
+.content-area {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100vh;
+  height: 100dvh;
+  margin-left: var(--rail);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
+  --pad: 44px;
+}
+
+.content-area > * {
+  width: min(var(--wrap), calc(100% - var(--pad) * 2));
+  margin-right: auto;
+  margin-left: var(--pad);
+}
+
+.content-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+  .content-area {
+    --pad: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  body,
+  body.is-collapsed {
+    --rail: 64px;
+  }
+
+  .content-area {
+    --pad: 24px;
+  }
+
+  .project-list,
+  .post-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .content-area {
+    --pad: 16px;
+  }
+
+  .hero,
+  .blog-hero {
+    padding-top: 28px;
+  }
+
+  .post-article {
+    padding: 20px;
+  }
+}

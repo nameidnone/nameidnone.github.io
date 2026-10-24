@@ -43,9 +43,18 @@
                 }
 
                 document.removeEventListener('keydown', onKey);
+
+                if (reduceMotion) {
+                    root.classList.remove('splash-pending');
+                    splash.remove();
+                    return;
+                }
+
+                body.classList.add('is-splash-entering');
                 splash.classList.add('is-leaving');
                 root.classList.remove('splash-pending');
-                window.setTimeout(() => splash.remove(), 1100);
+                window.setTimeout(() => splash.remove(), 1700);
+                window.setTimeout(() => body.classList.remove('is-splash-entering'), 2200);
             };
 
             splash.setAttribute('tabindex', '-1');
@@ -126,49 +135,6 @@
         revealItems.forEach((el) => el.classList.add('is-visible'));
     }
 
-    /* ---------- Ambient cursor light ---------- */
-    const glow = document.getElementById('cursorGlow');
-    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-    if (glow && canHover && !reduceMotion) {
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let glowX = targetX;
-        let glowY = targetY;
-        let rafId = null;
-
-        const updateGlow = () => {
-            glowX += (targetX - glowX) * 0.12;
-            glowY += (targetY - glowY) * 0.12;
-            glow.style.left = glowX + 'px';
-            glow.style.top = glowY + 'px';
-
-            if (Math.abs(targetX - glowX) > 0.5 || Math.abs(targetY - glowY) > 0.5) {
-                rafId = requestAnimationFrame(updateGlow);
-            } else {
-                rafId = null;
-            }
-        };
-
-        document.addEventListener('pointermove', (event) => {
-            targetX = event.clientX;
-            targetY = event.clientY;
-            glow.style.opacity = '1';
-            if (!rafId) rafId = requestAnimationFrame(updateGlow);
-        }, { passive: true });
-
-        document.addEventListener('pointerleave', () => {
-            glow.style.opacity = '0';
-        });
-
-        window.addEventListener('blur', () => {
-            glow.style.opacity = '0';
-        });
-
-        glow.style.left = glowX + 'px';
-        glow.style.top = glowY + 'px';
-    }
-
     /* ---------- Sidebar collapse ---------- */
     const sidebar = document.querySelector('.sidebar');
     const sidebarToggle = document.querySelector('.sidebar-toggle');
@@ -210,6 +176,4 @@
         });
     }
 
-    /* ---------- Mark the document as enhanced ---------- */
-    root.classList.add('has-js');
 })();
