@@ -59,15 +59,63 @@
         throw new Error('无法加载文章索引');
     }
 
+    function stripQuotes(value) {
+        const text = value.trim();
+        if ((text.startsWith('"') && text.endsWith('"')) || (text.startsWith("'") && text.endsWith("'"))) {
+            return text.slice(1, -1);
+        }
+        return text;
+    }
+
+    function parseScalar(raw) {
+        const value = raw.trim();
+        if (value.startsWith('[') && value.endsWith(']')) {
+            return value.slice(1, -1).split(',').map(stripQuotes).filter(Boolean);
+        }
+        return stripQuotes(value);
+    }
+
+    // 解析 Markdown 源文件：YAML front matter 作为 meta，其余为正文
+    function parseMarkdownSource(raw) {
+        const normalized = String(raw).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
+        if (!normalized.startsWith('---\n')) return { meta: {}, content: normalized };
+
+        const end = normalized.indexOf('\n---', 4);
+        if (end === -1) return { meta: {}, content: normalized };
+
+        const meta = {};
+        let lastKey = null;
+
+        for (const line of normalized.slice(4, end).split('\n')) {
+            if (!line.trim() || line.trim().startsWith('#')) continue;
+
+            const item = line.match(/^\s*-\s+(.*)$/);
+            if (item) {
+                if (!lastKey) continue;
+                if (!Array.isArray(meta[lastKey])) meta[lastKey] = [];
+                meta[lastKey].push(parseScalar(item[1]));
+                continue;
+            }
+
+            const pair = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+            if (!pair) continue;
+
+            lastKey = pair[1];
+            meta[lastKey] = pair[2].trim() ? parseScalar(pair[2]) : [];
+        }
+
+        return { meta, content: normalized.slice(end + 4).replace(/^\n+/, '') };
+    }
+
     async function ensureContent(post) {
         if (post.content) return post;
         if (!post.id) return post;
 
         try {
-            const response = await fetch(`posts/${encodeURIComponent(post.id)}.json`, { cache: 'no-cache' });
+            const response = await fetch(`posts/${encodeURIComponent(post.id)}.md`, { cache: 'no-cache' });
             if (!response.ok) return post;
-            const fullPost = await response.json();
-            return { ...post, ...fullPost };
+            const { meta, content } = parseMarkdownSource(await response.text());
+            return { ...post, ...meta, content };
         } catch (error) {
             return post;
         }
